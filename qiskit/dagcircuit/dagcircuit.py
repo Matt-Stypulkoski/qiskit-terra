@@ -22,7 +22,6 @@ to the input of B. The object's methods allow circuits to be constructed,
 composed, and modified. Some natural properties like depth can be computed
 directly from the graph.
 """
-from __future__ import annotations
 from collections import OrderedDict
 from typing import Tuple, Optional, List, Union, Dict, Set, Any, Iterator
 import copy
@@ -440,7 +439,7 @@ class DAGCircuit:
             new_condition = (wire_map.get(bit0, bit0).register, condition[1])
         return new_condition
 
-    def extend_back(self, dag: DAGCircuit, edge_map: Optional[Dict[Bit, Bit]] = None):
+    def extend_back(self, dag: 'DAGCircuit', edge_map: Optional[Dict[Bit, Bit]] = None):
         """Apply ``dag`` to the output of this circuit.
 
         Args:
@@ -463,7 +462,7 @@ class DAGCircuit:
         print(edge_map)
         self.compose_back(dag, edge_map)
 
-    def compose_back(self, input_circuit: DAGCircuit, edge_map: Optional[Dict[Bit, Bit]] = None):
+    def compose_back(self, input_circuit: 'DAGCircuit', edge_map: Optional[Dict[Bit, Bit]] = None):
         """Apply ``input_circuit`` to the output of this circuit.
 
         The two bases must be "compatible" or an exception occurs.
@@ -527,7 +526,7 @@ class DAGCircuit:
                 raise DAGCircuitError("bad node type %s" % nd.type)
 
     # FIXME: this does not work as expected. it is also not used anywhere
-    def compose_front(self, input_circuit: DAGCircuit,
+    def compose_front(self, input_circuit: 'DAGCircuit',
                       edge_map: Optional[Dict[Bit, Bit]] = None):
         """Apply the input circuit to the input of this circuit.
 
@@ -682,7 +681,7 @@ class DAGCircuit:
         return pred_map, succ_map
 
     def _full_pred_succ_maps(self, pred_map: Dict[Bit, DAGNode],
-                             succ_map: Dict[Bit, DAGNode], input_circuit: DAGCircuit,
+                             succ_map: Dict[Bit, DAGNode], input_circuit: 'DAGCircuit',
                              wire_map: Dict[Bit, Bit]) -> Tuple[Dict[Bit, DAGNode],
                                                                 Dict[Bit, DAGNode]]:
         """Map all wires of the input circuit.
@@ -743,7 +742,7 @@ class DAGCircuit:
         """Yield op nodes in topological order."""
         return (nd for nd in self.topological_nodes() if nd.type == 'op')
 
-    def substitute_node_with_dag(self, node: DAGNode, input_dag: DAGCircuit,
+    def substitute_node_with_dag(self, node: DAGNode, input_dag: 'DAGCircuit',
                                  wires: Optional[List[Bit]] = None):
         """Replace ``node`` with ``input_dag``.
 
@@ -1156,7 +1155,7 @@ class DAGCircuit:
             if n.type == "op":
                 self.remove_op_node(n)
 
-    def layers(self) -> Iterator[Dict[str, Union[DAGCircuit, List[List[Qubit]]]]]:
+    def layers(self) -> Iterator[Dict[str, Union['DAGCircuit', List[List[Qubit]]]]]:
         """Yield a shallow view on a layer of this DAGCircuit for all d layers of this circuit.
 
         A layer is a circuit whose gates act on disjoint qubits, i.e.,
@@ -1221,7 +1220,7 @@ class DAGCircuit:
 
             yield {"graph": new_layer, "partition": support_list}
 
-    def serial_layers(self) -> Iterator[Dict[str, Union[DAGCircuit, List[List[Qubit]]]]]:
+    def serial_layers(self) -> Iterator[Dict[str, Union['DAGCircuit', List[List[Qubit]]]]]:
         """Yield a layer for all gates of this circuit.
 
         A serial layer is a circuit with one gate. The layers have the

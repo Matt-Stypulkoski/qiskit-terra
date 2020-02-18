@@ -13,9 +13,7 @@
 # that they have been altered from the originals.
 
 """Object to represent the information at a node in the DAGCircuit."""
-from __future__ import annotations
 from typing import Dict, Optional, List, Tuple
-
 from qiskit.exceptions import QiskitError
 from qiskit.circuit import Instruction, Qubit, Clbit, ClassicalRegister
 from qiskit.circuit.bit import Bit
@@ -109,7 +107,7 @@ class DAGNode:
         return str(id(self))
 
     @staticmethod
-    def semantic_eq(node1: DAGNode, node2: DAGNode) -> bool:
+    def semantic_eq(node1: 'DAGNode', node2: 'DAGNode') -> bool:
         """
         Check if nodes are considered equivalent. This method is checked
         as a ``node_match`` for `nx.is_isomorphic()`_ in the ``networkx`` library.
