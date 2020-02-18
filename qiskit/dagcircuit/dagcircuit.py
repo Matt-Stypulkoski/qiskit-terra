@@ -32,7 +32,7 @@ import networkx as nx
 from qiskit.circuit.quantumregister import QuantumRegister, Qubit
 from qiskit.circuit.classicalregister import ClassicalRegister, Clbit
 from qiskit.circuit.gate import Gate
-from qiskit.circuit import Instruction
+from qiskit.circuit.instruction import Instruction
 from qiskit.circuit.bit import Bit
 from qiskit.circuit.register import Register
 from .exceptions import DAGCircuitError
