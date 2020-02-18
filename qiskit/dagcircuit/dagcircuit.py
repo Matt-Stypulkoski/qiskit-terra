@@ -24,19 +24,19 @@ directly from the graph.
 """
 from __future__ import annotations
 from collections import OrderedDict
+from typing import Tuple, Optional, List, Union, Dict, Set, Any, Iterator
 import copy
 import itertools
 import networkx as nx
-from typing import Tuple, Optional, List, Union, Dict, Set, Any, Iterator
 
 from qiskit.circuit.quantumregister import QuantumRegister, Qubit
 from qiskit.circuit.classicalregister import ClassicalRegister, Clbit
 from qiskit.circuit.gate import Gate
-from .exceptions import DAGCircuitError
-from .dagnode import DAGNode
-from qiskit.circuit.instruction import Instruction
+from qiskit.circuit import Instruction
 from qiskit.circuit.bit import Bit
 from qiskit.circuit.register import Register
+from .exceptions import DAGCircuitError
+from .dagnode import DAGNode
 
 
 class DAGCircuit:
@@ -222,7 +222,7 @@ class DAGCircuit:
         return [] if cond is None else list(cond[0])
 
     def _add_op_node(self, op: Instruction,
-                     qargs: List[Qubit], cargs: List[Qubit],
+                     qargs: List[Qubit], cargs: List[Clbit],
                      condition: Optional[Tuple[ClassicalRegister, int]] = None):
         """Add a new operation node to the graph and assign properties.
 
@@ -337,8 +337,10 @@ class DAGCircuit:
 
         return self._id_to_node[self._max_node_id]
 
-    def _check_edgemap_registers(self, edge_map: Dict[Bit, Bit], keyregs: Dict[str, Register],
-                                 valregs: Dict[str, Register], valreg: bool = True) -> Set[Register]:
+    def _check_edgemap_registers(self, edge_map: Dict[Bit, Bit],
+                                 keyregs: Dict[str, Register],
+                                 valregs: Dict[str, Register],
+                                 valreg: bool = True) -> Set[Register]:
         """Check that wiremap neither fragments nor leaves duplicate registers.
 
         1. There are no fragmented registers. A register in keyregs
@@ -364,7 +366,6 @@ class DAGCircuit:
         add_regs = set()
         reg_frag_chk = {}
         for v in keyregs.values():
-            print("CHECKING: {}".format(v))
             reg_frag_chk[v] = {j: False for j in range(len(v))}
         for k in edge_map.keys():
             if k.register.name in keyregs:
@@ -607,6 +608,9 @@ class DAGCircuit:
 
     def depth(self) -> int:
         """Return the circuit depth.
+
+        Returns:
+            The circuit depth.
 
         Raises:
             DAGCircuitError: if not a directed acyclic graph
@@ -986,6 +990,9 @@ class DAGCircuit:
 
         Args:
             names: operation names
+
+        Returns:
+            op nodes with the given name(s)
         """
         named_nodes = []
         for node in self._multi_graph.nodes():
@@ -1019,6 +1026,9 @@ class DAGCircuit:
 
         Args:
             node: The node to return successors of.
+
+        Returns:
+            The successors of ``node``.
         """
         return self._multi_graph.successors(node)
 
@@ -1027,6 +1037,9 @@ class DAGCircuit:
 
         Args:
             node: The node to return predecessors of.
+
+        Returns:
+            The predecessors of ``node``.
         """
         return self._multi_graph.predecessors(node)
 
@@ -1036,6 +1049,9 @@ class DAGCircuit:
 
         Args:
             node: The node to return predecessors of.
+
+        Yields:
+            The predecessors of ``node`` that are connected by a quantum edge.
         """
         for predecessor in self.predecessors(node):
             if isinstance(self._multi_graph.get_edge_data(predecessor, node, key=0)['wire'], Qubit):
@@ -1046,6 +1062,9 @@ class DAGCircuit:
 
         Args:
             node: The node to return ancestors of.
+
+        Returns:
+            The ancestors of ``node``
         """
         return nx.ancestors(self._multi_graph, node)
 
@@ -1054,6 +1073,9 @@ class DAGCircuit:
 
         Args:
             node: The node to return descendants of.
+
+        Returns:
+            The descendants of ``node``
         """
         return nx.descendants(self._multi_graph, node)
 
@@ -1064,6 +1086,9 @@ class DAGCircuit:
 
         Args:
             node: Starting node for breadth-first search
+
+        Returns:
+            ``node`` and its successors in bredth-first search order.
         """
         return nx.bfs_successors(self._multi_graph, node)
 
@@ -1082,6 +1107,9 @@ class DAGCircuit:
 
         Args:
             node: An operation node.
+
+        Raises:
+            DAGCircuitError: If the given node is not an op node.
         """
         if node.type != 'op':
             raise DAGCircuitError('The method remove_op_node only works on op node types. An "%s" '
