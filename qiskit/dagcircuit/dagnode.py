@@ -15,7 +15,9 @@
 """Object to represent the information at a node in the DAGCircuit."""
 from typing import Dict, Optional, List, Tuple
 from qiskit.exceptions import QiskitError
-from qiskit.circuit import Instruction, Qubit, Clbit, ClassicalRegister
+from qiskit.circuit.instruction import Instruction
+from qiskit.circuit.quantumregister import Qubit
+from qiskit.circuit.classicalregister import Clbit, ClassicalRegister
 from qiskit.circuit.bit import Bit
 
 
