@@ -42,10 +42,15 @@ def circuit_to_gate(circuit, parameter_map=None):
         input circuit. Upon decomposition, this gate will
         yield the components comprising the original circuit.
     """
+    if circuit.clbits:
+        raise QiskitError('Circuit with classical bits cannot be converted '
+                          'to gate.')
+
     for inst, _, _ in circuit.data:
         if not isinstance(inst, Gate):
-            raise QiskitError('One or more instructions in this instruction '
-                              'cannot be converted to a gate')
+            raise QiskitError(('One or more instructions cannot be converted to'
+                               ' a gate. "{}" is not a gate instruction').format(
+                                   inst.name))
 
     if parameter_map is None:
         parameter_dict = {p: p for p in circuit.parameters}
@@ -75,6 +80,11 @@ def circuit_to_gate(circuit, parameter_map=None):
 
     target = circuit.copy()
     target._substitute_parameters(parameter_dict)
+
+    # pylint: disable=cyclic-import
+    from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary as sel
+    # pylint: enable=cyclic-import
+    sel.add_equivalence(gate, target)
 
     definition = target.data
 
