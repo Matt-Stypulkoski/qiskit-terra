@@ -1029,7 +1029,7 @@ class DAGCircuit:
                 ops.append(node)
         return ops
 
-    def longest_path(self) -> List['DAGNode']::
+    def longest_path(self) -> List['DAGNode']:
         """Returns the longest path in the dag as a list of DAGNodes."""
         return [self._id_to_node[idx]
                 for idx in _gls[self._gx].dag_longest_path(self._multi_graph)]
