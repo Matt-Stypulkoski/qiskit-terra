@@ -32,12 +32,11 @@ import networkx as nx
 import retworkx as rx
 
 from qiskit.circuit.quantumregister import QuantumRegister, Qubit
-from qiskit.circuit.classicalregister import ClassicalRegister
+from qiskit.circuit.classicalregister import ClassicalRegister, Clbit
 from qiskit.circuit.gate import Gate
 from qiskit.circuit.instruction import Instruction
 from qiskit.circuit.bit import Bit
 from qiskit.circuit.register import Register
-from .exceptions import DAGCircuitError
 from qiskit.dagcircuit.exceptions import DAGCircuitError
 from qiskit.dagcircuit.dagnode import DAGNode
 
@@ -948,7 +947,7 @@ class DAGCircuit:
                        self._id_to_node[dest],
                        edge)
 
-    def op_nodes(self, op=None, include_directives=True):
+    def op_nodes(self, op=None, include_directives=True) -> List['DAGNode']:
         """Get the list of "op" nodes in the dag.
 
         Args:
@@ -1012,7 +1011,7 @@ class DAGCircuit:
             if len(node.qargs) >= 3:
                 three_q_gates.append(node)
         return three_q_gates
-      
+
     def two_qubit_ops(self):
         """Get list of 2 qubit operations. Ignore directives like snapshot and barrier."""
         ops = []
@@ -1059,7 +1058,7 @@ class DAGCircuit:
 
     def ancestors(self, node: 'DAGNode') -> Set['DAGNode']:
         """Returns set of the ancestors of a node as DAGNodes.
-        
+
         Args:
             node: The node to return ancestors of.
 
